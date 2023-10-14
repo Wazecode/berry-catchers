@@ -14,6 +14,7 @@ const GAME_PAUSE = 2;
 const GAME_START = 3
 const GAME_OVER = 4;
 
+const GAME_TIME = 100;
 const DIFF_CHANGE = 3;
 var gameState = GAME_START;
 
@@ -60,10 +61,31 @@ class Cherry {
         }
         else if(this.posY > canvas.height) {
             this.reset();
-            console.log("droped");
         }
     }
 
+}
+// ------------------------------------------------
+
+// timer ------------------------
+var time = 0;
+function startTime() {
+    time = 0;
+    timeWatch = setInterval(timeUpdate, 1000);
+}
+
+function timeUpdate() {
+    console.log("updates");
+    console.log(time);
+    time += 1;
+}
+
+function timeReset() {
+    time = 0;
+}
+
+function timePaused() {
+    time--;
 }
 
 
@@ -74,7 +96,6 @@ function getRandomInt(min, max) {
 }
 
 function cherryDo(c) {
-    console.log("cherryDo");
     c.draw();
     c.update();
     c.collisionCheck();
@@ -82,7 +103,7 @@ function cherryDo(c) {
 
 //--------------------------------------------------
 var cherries = new Array(new Cherry);
-//var c1 = new Cherry();
+
 
 function mainLoop() {
     requestAnimationFrame(mainLoop);
@@ -90,18 +111,26 @@ function mainLoop() {
 
     context.fillStyle = 'black';
     context.fillText(score , canvas.width/15, canvas.height/10);
+    context.fillText(3, 14* canvas.width/15, canvas.height/10);
 
     switch(gameState) {
     case GAME_START:
-        context.fillText("CATCHY", canvas.width/2, canvas.height/2);
+        context.fillText("BERRY CATCHER", canvas.width/2, canvas.height/2);
+        timePaused();
         break;
     case GAME_PAUSE:
-        context.fillText("Paused", canvas.width/2, canvas.height/2);
+        context.fillText("PAUSED", canvas.width/2, canvas.height/2);
+        timePaused();
         break;
     case GAME_OVER:
         context.fillText("GAME OVER", canvas.width/2, canvas.height/2);
+        timePaused();
         break;
     case GAME_RUNNING:
+        if(time > GAME_TIME) {
+            gameState = GAME_OVER;
+            timeReset();
+        }
         if(score > difficulty*DIFF_CHANGE) {
             difficulty++;
             cherries.push(new Cherry);
@@ -113,16 +142,12 @@ function mainLoop() {
         else if(pos > canvas.width)
             pos = 0;
         context.fillRect(pos, PLAYER_INTIAL_POS_Y, PLAYER_WIDTH, PLAYER_HEIGTH);
-        // c1.draw();
-        // c1.update();
-        // c1.collisionCheck();
     }
 
 }
 
 
 document.addEventListener('keydown', function(e) {
-    console.log(e.code);
 
     //right arrow key
     if (e.code == "ArrowRight") {
@@ -134,6 +159,7 @@ document.addEventListener('keydown', function(e) {
     }
     // Enter
     else if(e.code == "Enter" && gameState > 1) {
+        if(gameState > 2) startTime();
         gameState = GAME_RUNNING;
     // 'P'
     } else if(e.code == "KeyP" && gameState === GAME_RUNNING) {
