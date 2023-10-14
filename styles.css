@@ -1,11 +1,7 @@
 
-#window {
-    border: 2px solid black;
+html, body {
+    margin: 0 !important;
+    padding: 0 !important;
 }
 
 
-#score {
-    border: 2px solid black;
-
-    font: 30px bold;
-}
