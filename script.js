@@ -14,20 +14,25 @@ const GAME_PAUSE = 2;
 const GAME_START = 3
 const GAME_OVER = 4;
 
+const DIFF_CHANGE = 3;
 var gameState = GAME_START;
 
 // Player's stuff
 const PLAYER_VEL = 10;
 const PLAYER_INTIAL_POS_X = x = canvas.width / 2;
 const PLAYER_INTIAL_POS_Y = 9 * canvas.height / 10;
+const PLAYER_WIDTH = 90;
+const PLAYER_HEIGTH = 10;
 
 var pos = PLAYER_INTIAL_POS_X
 
 var score = 0;
+var difficulty = 1;
 
 // Cherry's stuff 
 class Cherry {
     static color = 'red';
+    static CHERRY_SIZE = 20;
     constructor() {
         this.reset();
     }
@@ -39,7 +44,8 @@ class Cherry {
     }
 
     draw() {
-        context.fillRect(this.posX, this.posY , 60, 20);
+        context.fillStyle = 'red';
+        context.fillRect(this.posX, this.posY , 30, 30);
     }
 
     update() {
@@ -47,20 +53,19 @@ class Cherry {
     }
 
     collisionCheck() {
-        if(this.posY >= PLAYER_INTIAL_POS_Y && 
-            this.posX > pos && this.posX < pos + 60 ) {
+        if(this.posY >= PLAYER_INTIAL_POS_Y - PLAYER_HEIGTH && this.posY >= PLAYER_INTIAL_POS_Y + PLAYER_HEIGTH &&  
+            this.posX > pos - PLAYER_WIDTH && this.posX < pos + PLAYER_WIDTH ) {
             this.reset();
             score++;    
         }
         else if(this.posY > canvas.height) {
             this.reset();
-            delete this;
+            console.log("droped");
         }
     }
 
 }
 
-c1 = new Cherry(300, 2);
 
 //------------------ Helping function -----------
 
@@ -68,12 +73,22 @@ function getRandomInt(min, max) {
   return Math.floor(Math.random() * (max - min)) + min;
 }
 
+function cherryDo(c) {
+    console.log("cherryDo");
+    c.draw();
+    c.update();
+    c.collisionCheck();
+}
+
 //--------------------------------------------------
+var cherries = new Array(new Cherry);
+//var c1 = new Cherry();
 
 function mainLoop() {
     requestAnimationFrame(mainLoop);
     context.clearRect(0,0,canvas.width,canvas.height);
 
+    context.fillStyle = 'black';
     context.fillText(score , canvas.width/15, canvas.height/10);
 
     switch(gameState) {
@@ -87,16 +102,20 @@ function mainLoop() {
         context.fillText("GAME OVER", canvas.width/2, canvas.height/2);
         break;
     case GAME_RUNNING:
+        if(score > difficulty*DIFF_CHANGE) {
+            difficulty++;
+            cherries.push(new Cherry);
+        }
+        cherries.forEach(cherryDo);
         context.fillStyle = 'yellow';
         if(pos < 0)
             pos = canvas.width;
         else if(pos > canvas.width)
             pos = 0;
-        context.fillRect(pos, PLAYER_INTIAL_POS_Y, 60, 20);
-
-        c1.draw();
-        c1.update();
-        c1.collisionCheck();
+        context.fillRect(pos, PLAYER_INTIAL_POS_Y, PLAYER_WIDTH, PLAYER_HEIGTH);
+        // c1.draw();
+        // c1.update();
+        // c1.collisionCheck();
     }
 
 }
