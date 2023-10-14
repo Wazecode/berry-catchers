@@ -1,0 +1,11 @@
+
+#window {
+    border: 2px solid black;
+}
+
+
+#score {
+    border: 2px solid black;
+
+    font: 30px bold;
+}
