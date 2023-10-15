@@ -10,6 +10,7 @@ context.textAlign = "center";
 
 // Images
 const IMAGE_BC = document.getElementById('Berry-Catchers');
+const IMAGE_PRESS_ENTER = document.getElementById('Press-Enter-to-start');
 const IMAGE_BASKET = document.getElementById('basket');
 const IMAGE_CHERRY = document.getElementById('cherry');
 
@@ -127,6 +128,7 @@ function mainLoop() {
     switch(gameState) {
     case GAME_START:
         context.drawImage(IMAGE_BC, canvas.width/4, canvas.height/4, canvas.width/2, canvas.height/2);
+        context.drawImage(IMAGE_PRESS_ENTER, canvas.width/4, 3*canvas.height/4 + 5, canvas.width/2, canvas.height/7);
         break;
     case GAME_PAUSE:
         context.fillText("PAUSED", canvas.width/2, canvas.height/2);
